@@ -1,9 +1,9 @@
-''' Uses Library of Congress linked data API to recursively
+""" Uses Library of Congress linked data API to recursively
 get all narrower terms of a given subject heading URI and
 write them to a CSV file called 'narrower_terms.csv'
 with columns 'URI', 'Label', and 'Include'.
 
-'''
+"""
 import re
 import csv
 from urllib.parse import quote
@@ -14,11 +14,11 @@ from bs4 import BeautifulSoup
 LABEL_RE = re.compile(r'^(?!Older).* Indians( \(.*\))?$')
 
 def main():
-    '''
+    """
     Write CSV headers and call term-getting function.
-    '''
+    """
 
-    outfile = 'narrower_terms.csv'
+    # outfile = 'narrower_terms.csv'
     # with open(outfile, 'w', newline='') as csvfile:
     #     writer = csv.writer(csvfile)
     #     writer.writerow(['URI', 'Label', 'Include'])
@@ -27,7 +27,7 @@ def main():
     #     'http://id.loc.gov/authorities/subjects/sh85065184', outfile
     # )
 
-    get_compound_terms('http://id.loc.gov/authorities/subjects/sh85065184', outfile)
+    get_compound_terms('http://id.loc.gov/authorities/subjects/sh85065184')
 
 def get_narrower_terms_recursive(subject_uri, outfile):
 
@@ -49,26 +49,34 @@ def get_narrower_terms_recursive(subject_uri, outfile):
             writer.writerow([uri, label, include])
             get_narrower_terms_recursive(uri, outfile)
 
-def get_compound_terms(subject_uri, outfile):
-    ''' compound subject headings that have the
+
+def get_compound_terms(subject_uri):
+    """ compound subject headings that have the
     specified subject URI as a component.
-    '''
-    subject = requests.get(subject_uri + '.rdf').text
-    soup = BeautifulSoup(subject, features='html.parser')
-    subject_label = soup.find('madsrdf:authoritativelabel').text
+    """
+    class Search:
+        def __init__(self, uri):
+            self.uri = uri
+            self.rdf = requests.get(self.uri + ".rdf").text
+            self.label = BeautifulSoup(self.rdf, features='html.parser'
+                                       ).find('madsrdf:authoritativelabel').text
+            self.query = ('http://id.loc.gov/search/?q=rdftype:ComplexSubject&q=' +
+                          quote(self.label) +
+                          '&format=atom')
+            self.result_uris = []
 
-    query = ('http://id.loc.gov/search/?q=rdftype:ComplexSubject&q=' +
-             quote(subject_label) +
-             '&format=atom')
+        def get_paginated_uris(self):
+            results = BeautifulSoup(requests.get(self.query).text,
+                                    features='html.parser')
+            for a in results.find_all("link", type="application/rdf+xml"):
+                self.result_uris.append(a["href"])
+            next_page = results.find("link", rel="next")["href"]
+            if next_page:
+                get_paginated_uris(next_page)
 
-    get_paginated_uris(query)
-
-def get_paginated_uris(query):
-    results = BeautifulSoup(requests.get(query).text, features='html.parser')
-    uris = [a["href"] for a in results.find_all("link", type="application/rdf+xml")]
-    next_page = results.find("link", rel="next")["href"]
-    if next_page:
-        get_paginated_uris(next_page)
+    lc_search = Search(subject_uri)
+    get_paginated_uris(lc_search.query)
+    print(lc_search.result_uris)
 
 
 if __name__ == '__main__':
