@@ -1,10 +1,9 @@
 import csv
-import sys
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 def main():
 
-    infile = 'narrower_terms.csv'
+    infile = 'lcsh.csv'
 
     with open(infile, 'r') as csvfile:
         reader = csv.DictReader(csvfile)
