@@ -38,15 +38,27 @@ def get_narrower_terms_recursive(subject_uri, dataset):
         authority = term.find('madsrdf:authority')
         lc_uri = authority['rdf:about']
         lc_label = authority.find('madsrdf:authoritativelabel').text
+
+        lc_variants = ";".join([label.text for label in authority.find_all('madsrdf:variantlabel')])
         if re.match(label_re, lc_label):
+            lc_variants = get_variant_labels(lc_uri)
             wikidata = get_wikidata(lc_uri)
-            dataset.append({"LCSH Label": lc_label,
-                              "LCSH URI": lc_uri,
-                              "Wikidata Label": wikidata["label"],
-                              "Wikidata URI": wikidata["uri"]})
+            dataset.append({"LCSH URI": lc_uri,
+                            "LCSH Label": lc_label,
+                            "LCSH Variant Labels": ";".join(lc_variants),
+                            "Wikidata URI": wikidata["uri"],
+                            "Wikidata Label": wikidata["label"]})
 
         get_narrower_terms_recursive(lc_uri, dataset)
 
+def get_variant_labels(lc_uri):
+    """ Take LC URI, return list of variant labels.
+    """
+    rdf = requests.get(lc_uri + '.rdf').text
+    soup = BeautifulSoup(rdf, features="html.parser")
+    variant_labels = [label.text for label in soup.find_all("madsrdf:variantlabel")]
+
+    return variant_labels
 
 def get_compound_terms(subject_uri):
     """ compound subject headings that have the specified subject URI as the first component
