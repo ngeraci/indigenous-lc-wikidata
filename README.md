@@ -9,6 +9,9 @@ Wikidata, while not perfect, usually uses labels that reflect Wikipedia article 
 
 Adding LC IDs to Wikidata items using [Wikidata property P244](https://www.wikidata.org/wiki/Property:P244) is a means by which libraries currently using LC headings can more easily query Wikidata to find the LC heading's corresponding Wikidata label and evaluate it for use.
 
+## Context
+I'm a white metadata librarian living and working on Luiseño, Cahuilla and Tongva land (the Inland Empire of Southern California). I think white librarians should be more proactive in cleaning up the racist messes our professional forebearers made, and this is an experimental effort in that direction.  
+
 ## Steps
 1. Use LC Linked Data service to get tribe names:
 	* Narrower terms of "Indians of North America"
