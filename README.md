@@ -7,7 +7,7 @@ These are scripts used in a project to reconcile Library of Congress Subject Hea
 
 Wikidata, while not perfect, usually uses labels that reflect Wikipedia article titles, which have often been negotiated over time via public discussion. Anecdotally, it appears more likely to match current usage, though it doesn't always reflect self-preferred names of tribes. If you're working on a focused project or collection with a particular community, Wikidata is no substitute for just talking with the people you're working with about what they prefer. But it appears to have potential as a tool to make general digital collections metadata a little less bad.
 
-Adding LC IDs to Wikidata items using [Wikidata property P244](https://www.wikidata.org/wiki/Property:P244) is a means by which libraries currently using LC headings can more easily query Wikidata to find the LC heading's corresponding Wikidata label and evaluate it for use.
+Adding LC IDs to Wikidata items using [Wikidata property P244](https://www.wikidata.org/wiki/Property:P244) is a means by which libraries currently using LC headings can more easily query Wikidata to find the LC heading's corresponding Wikidata label and see if it would be more appropriate for use.
 
 ## Context
 I'm a white metadata librarian living and working on Luiseño, Cahuilla and Tongva land (the Inland Empire of Southern California). I think white librarians should be more proactive in cleaning up the racist messes our professional forebearers made, and this is an experimental effort in that direction.  
